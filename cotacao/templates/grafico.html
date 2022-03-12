@@ -1,0 +1,81 @@
+<!DOCTYPE html> 
+<html lang="pt-br"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Cotacoins</title> 
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1175/1175277.png" type="image/x-icon" />
+    <style> 
+        div h2::after{
+            content:'';
+            position: relative;
+            height: 4px;
+            width: 100px;
+            margin-top: 1px;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #8e2de2, #4a00e0); 
+            } 
+        .setinha{ transition: 0.3s ease all; } 
+        .setinha:hover{ color: #8e2de2; } 
+    </style> 
+    <script src="https://kit.fontawesome.com/0b66beacb2.js" crossorigin="anonymous"></script> 
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel='stylesheet'> 
+</head> 
+<body style="padding: 0; margin: 0; box-sizing: border-box; display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow-x: hidden; align-items: center; justify-content: space-around; background-color: #1c1c1c; color: #eaeaea; font-family: 'Poppins'"; > 
+    <a href="infos-grafico" style="position: absolute; left: 0; top: 0; margin: 50px 0px 0px 50px; text-decoration: none; font-weight: 700; font-size: 40px; color: white;"><p class="setinha"><</p></a> 
+        <div style="display: flex; width: 50vw; flex-direction: column; background-color: #3c3c3c; padding: 20px 30px; border-radius: 15px;"> 
+        <h2 id='h2'>Variação do valor de  nos últimos dias</h2> 
+        <canvas id="myChart"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const moedaOrigem = window.location.href.split('=')[1]
+            const link = `https://economia.awesomeapi.com.br/${moedaOrigem}/1200`
+            document.getElementById('h2').textContent = `Variação do valor de ${moedaOrigem} nos últimos dias`
+            var apiData = [];
+            var apiTimestamp = [];
+
+            fetch(link)
+            .then(response => response.json())
+            .then(data => {
+                apiDataLength = data.length;
+                for(i = 0; i < apiDataLength / 4; i++){
+                    apiData.push(data[i * 4].ask);
+                    apiTimestamp.push(data[i * 4].timestamp);
+                }
+            })
+            .then( () => {
+                apiData.reverse();
+                apiTimestamp.reverse();
+
+                const labels = [];
+
+                for(let i = 60; i < 90; i++){
+                    labels.push(new Date(apiTimestamp[i] * 1000).getDate());
+                }
+                const dataDatas = [];
+                for(let i = 60; i < 90; i++){
+                    dataDatas.push(apiData[i]);
+                }
+                const data = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Variação da moeda ao longo do tempo',
+                        backgroundColor: 'rgb(256, 256, 256)',
+                        borderColor: 'rgb(256, 256, 256)',
+                        data: dataDatas,
+                    }]
+                };
+                const config = {
+                    type: 'line',
+                    data: data,
+                    options: {}
+                };
+
+                new Chart(document.getElementById('myChart'),config);
+            }   
+            )
+        </script>      
+    </div> 
+</body> 
+</html>
